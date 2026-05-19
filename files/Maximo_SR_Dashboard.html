@@ -1039,105 +1039,43 @@ const FILE = {
       reportedDay    : repDay,   // day-of-month from Reported Date
     };
   },
- _boot(json, fname){
-
+  _boot(json, fname){
     UI.load('Normalising rows…');
-
-    // Convert uploaded Excel rows
-    S.raw = json
-        .map(r => this._norm(r))
-        .filter(r => r.srNo || r.status);
-
-    // Reset filters
-    S.dayFilter = { month:'', day:0 };
-    S.deptSel = '';
-
-    S.filtered = [...S.raw];
-
-    // Build dashboard
+    S.raw = json.map(r=>this._norm(r)).filter(r=>r.srNo||r.status);
+    // reset filters
+    S.dayFilter = {month:'',day:0};
+    S.deptSel   = '';
+    S.filtered  = [...S.raw];
     FILTERS.build();
     RENDER.all();
-
     // Show dashboard
     document.getElementById('emptyState').style.display = 'none';
-
     const dash = document.getElementById('dash');
     dash.style.display = 'flex';
-
-    document.getElementById('sidebar')
-        .classList.add('visible');
-
-    // Upload label
-    const short =
-        fname.length > 24
-        ? fname.slice(0,22) + '…'
-        : fname;
-
-    document.getElementById('upPill')
-        .classList.add('loaded');
-
-    document.getElementById('upLabel')
-        .textContent = short;
-
-    // Status
-    document.getElementById('statusDot')
-        .classList.add('live');
-
-    document.getElementById('statusLabel')
-        .textContent =
-        S.raw.length.toLocaleString() +
-        ' records loaded';
-
-    document.getElementById('kpiBadge')
-        .textContent =
-        S.raw.length.toLocaleString() +
-        ' SRs';
-
-    // Last updated
+    document.getElementById('sidebar').classList.add('visible');
+    // Topbar updates
+    const short = fname.length > 24 ? fname.slice(0,22)+'…' : fname;
+    document.getElementById('upPill').classList.add('loaded');
+    document.getElementById('upLabel').textContent = short;
+    document.getElementById('statusDot').classList.add('live');
+    document.getElementById('statusLabel').textContent =
+      S.raw.length.toLocaleString() + ' records loaded';
+    document.getElementById('kpiBadge').textContent = S.raw.length.toLocaleString() + ' SRs';
+    // Last updated timestamp
     const now = new Date();
-
-    document.getElementById('lastUpdWrap')
-        .style.display = '';
-
-    document.getElementById('lastUpdVal')
-        .textContent =
-        now.toLocaleDateString('en-GB',{
-            day:'2-digit',
-            month:'short',
-            year:'numeric'
-        }) + ' ' +
-        now.toLocaleTimeString([],{
-            hour:'2-digit',
-            minute:'2-digit',
-            second:'2-digit'
-        });
-
-    document.getElementById('exportBtn')
-        .style.display = '';
-
-    // =====================================
-    // SAVE LATEST DASHBOARD DATA
-    // =====================================
-
-    const dashboardData = {
-        rows: S.raw,
-        fileName: fname,
-        updatedAt: now.toISOString()
-    };
-
-    localStorage.setItem(
-        'maximo_dashboard_latest_data',
-        JSON.stringify(dashboardData)
-    );
-
-    // Trigger refresh for viewers
-    localStorage.setItem(
-        'maximo_dashboard_refresh',
-        Date.now()
-    );
-
+    document.getElementById('lastUpdWrap').style.display = '';
+    document.getElementById('lastUpdVal').textContent =
+      now.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}) + ' ' +
+      now.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+    document.getElementById('exportBtn').style.display = '';
+    // Save uploaded data to localStorage so it persists after refresh
+    try {
+      const payload = JSON.stringify({ rows: S.raw, fname: fname, ts: new Date().toISOString() });
+      localStorage.setItem('sr_dashboard_data', payload);
+    } catch(e) { console.warn('localStorage save failed:', e); }
     UI.unload();
-}
+  },
+};
 
 /* ─────────────────────────────────────────
    5. FILTERS
@@ -2177,100 +2115,6 @@ const DB = {
 const pill = document.getElementById('upPill');
 pill.addEventListener('dragover', e=>{ e.preventDefault(); pill.classList.add('loaded'); });
 pill.addEventListener('dragleave', ()=>pill.classList.remove('loaded'));
-
-// =====================================
-// AUTO LOAD SAVED DASHBOARD
-// =====================================
-
-window.addEventListener('load', () => {
-
-    const savedData =
-        localStorage.getItem(
-            'maximo_dashboard_latest_data'
-        );
-
-    if(savedData){
-
-        try{
-
-            const parsed =
-                JSON.parse(savedData);
-
-            S.raw = parsed.rows || [];
-
-            S.filtered = [...S.raw];
-
-            if(S.raw.length){
-
-                FILTERS.build();
-
-                RENDER.all();
-
-                document.getElementById('emptyState')
-                    .style.display = 'none';
-
-                const dash =
-                    document.getElementById('dash');
-
-                dash.style.display = 'flex';
-
-                document.getElementById('sidebar')
-                    .classList.add('visible');
-
-                document.getElementById('statusDot')
-                    .classList.add('live');
-
-                document.getElementById('statusLabel')
-                    .textContent =
-                    S.raw.length.toLocaleString() +
-                    ' records loaded';
-
-                document.getElementById('exportBtn')
-                    .style.display = '';
-
-                document.getElementById('lastUpdWrap')
-                    .style.display = '';
-
-                document.getElementById('lastUpdVal')
-                    .textContent =
-                    new Date(
-                        parsed.updatedAt
-                    ).toLocaleString();
-
-                document.getElementById('kpiBadge')
-                    .textContent =
-                    S.raw.length.toLocaleString() +
-                    ' SRs';
-            }
-
-        }catch(error){
-
-            console.log(
-                'Dashboard load failed',
-                error
-            );
-        }
-    }
-
-    UI.unload();
-});
-
-
-// =====================================
-// AUTO REFRESH FOR VIEWERS
-// =====================================
-
-window.addEventListener('storage', (event) => {
-
-    if(event.key === 'maximo_dashboard_refresh'){
-
-        location.reload();
-    }
-});
-
-
-
-   
 </script>
 
 <!-- ═══════════════ HOSTING INSTRUCTIONS ═══════════════
