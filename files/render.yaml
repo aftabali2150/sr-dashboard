@@ -3,8 +3,10 @@ services:
     name: sr-dashboard
     runtime: python
     pythonVersion: "3.11.9"
-    buildCommand: pip install --upgrade pip
+    buildCommand: echo done
     startCommand: python server.py
+    rootDir: files
     envVars:
       - key: PORT
         value: 10000
+        
