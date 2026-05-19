@@ -1,9 +1,10 @@
 import http.server
 import json
 import os
+import sys
 from datetime import datetime
 
-PORT = int(os.environ.get('PORT', 8080))
+PORT = int(os.environ.get('PORT', 10000))
 FOLDER = os.path.dirname(os.path.abspath(__file__))
 DATA_FILE = os.path.join(FOLDER, 'sr_data.json')
 
@@ -13,8 +14,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         super().__init__(*args, directory=FOLDER, **kwargs)
 
     def do_GET(self):
-        # Serve index as default
-        if self.path == '/':
+        if self.path == '/' or self.path == '':
             self.path = '/Maximo_SR_Dashboard.html'
         super().do_GET()
 
@@ -27,17 +27,17 @@ class Handler(http.server.SimpleHTTPRequestHandler):
                 with open(DATA_FILE, 'w', encoding='utf-8') as f:
                     json.dump(payload, f, ensure_ascii=False)
                 if payload.get('cleared'):
-                    print(f"[{datetime.now().strftime('%H:%M:%S')}] Data CLEARED by Admin")
+                    print(f"Data CLEARED by Admin", flush=True)
                 else:
                     count = len(payload.get('rows', []))
-                    print(f"[{datetime.now().strftime('%H:%M:%S')}] Data SAVED — {count} records")
+                    print(f"Data SAVED — {count} records", flush=True)
                 self.send_response(200)
                 self.send_header('Content-Type', 'application/json')
                 self.send_header('Access-Control-Allow-Origin', '*')
                 self.end_headers()
                 self.wfile.write(b'{"ok":true}')
             except Exception as e:
-                print(f"Error: {e}")
+                print(f"Error: {e}", flush=True)
                 self.send_response(500)
                 self.end_headers()
         else:
@@ -52,10 +52,11 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         self.end_headers()
 
     def log_message(self, format, *args):
-        print(f"[{datetime.now().strftime('%H:%M:%S')}] {args[0]} {args[1]}")
+        pass
 
 if __name__ == '__main__':
     os.chdir(FOLDER)
-    print(f"SR Dashboard Server running on port {PORT}")
-    with http.server.HTTPServer(('', PORT), Handler) as httpd:
-        httpd.serve_forever()
+    print(f"Starting SR Dashboard on port {PORT}", flush=True)
+    server = http.server.HTTPServer(('0.0.0.0', PORT), Handler)
+    print(f"Server running on port {PORT}", flush=True)
+    server.serve_forever()
