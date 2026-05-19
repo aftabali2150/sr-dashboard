@@ -11,71 +11,54 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
-  --bg:#07101f;--surface:#0c1829;--card:#0f1e30;--card2:#132438;--card3:#19304a;
-  --border:#1c3050;--border2:#264566;--border3:#2e5478;--blue:#3b82f6;--blue-d:#1d4ed8;
-  --green:#10b981;--red:#ef4444;--amber:#f59e0b;--purple:#8b5cf6;--cyan:#06b6d4;
-  --text:#e4eaf4;--text2:#6b87a8;--text3:#374f68;--radius:12px;
+  --bg:#07101f;--surface:#0c1829;--card:#0f1e30;--card2:#132438;--border:#1c3050;
+  --border2:#264566;--blue:#3b82f6;--blue-d:#1d4ed8;--green:#10b981;--red:#ef4444;
+  --amber:#f59e0b;--purple:#8b5cf6;--cyan:#06b6d4;--text:#e4eaf4;--text2:#6b87a8;--text3:#374f68;
 }
-body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);font-size:13px;line-height:1.5;display:flex;flex-direction:column;min-height:100vh}
-::-webkit-scrollbar{width:4px;height:4px}
-::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
-#loading{position:fixed;inset:0;z-index:9999;background:rgba(7,16,31,.96);backdrop-filter:blur(12px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;transition:opacity .3s}
-#loading.hidden{opacity:0;pointer-events:none}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);font-size:13px;line-height:1.5}
+#loading{position:fixed;inset:0;z-index:9999;background:rgba(7,16,31,.96);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px}
+#loading.hidden{display:none}
 .spinner{width:44px;height:44px;border-radius:50%;border:2px solid var(--border2);border-top-color:var(--blue);animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-#loginModal{position:fixed;inset:0;z-index:8000;background:rgba(7,16,31,.92);backdrop-filter:blur(16px);display:none;align-items:center;justify-content:center}
-#loginModal.show{display:flex}
-.login-box{background:var(--surface);border:1px solid var(--border2);border-radius:20px;padding:32px 28px;width:360px;max-width:92vw}
-.login-logo{width:54px;height:54px;border-radius:14px;margin:0 auto 20px;background:linear-gradient(135deg,var(--blue),var(--purple));display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900;color:#fff}
-.login-title{font-size:20px;font-weight:800;text-align:center}
-.login-field{margin-bottom:14px}
-.login-field label{display:block;font-size:10px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px}
-.login-input{width:100%;padding:10px 12px;border-radius:8px;background:var(--card);border:1px solid var(--border);color:var(--text);font-size:13px;outline:none}
-.login-input:focus{border-color:var(--blue)}
-.login-btn{width:100%;padding:12px;background:linear-gradient(135deg,var(--blue-d),var(--purple-d));border:none;border-radius:8px;color:#fff;font-weight:700;cursor:pointer;margin-top:8px}
-.login-err{display:none;margin-top:12px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);border-radius:6px;padding:8px;font-size:11px;color:var(--red);text-align:center}
-.login-err.show{display:block}
-.viewer-link{text-align:center;margin-top:16px;font-size:11px;color:var(--text3)}
-.viewer-link a{color:var(--blue);text-decoration:none;cursor:pointer}
-.topbar{height:62px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:14px;position:sticky;top:0;z-index:500}
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;height:62px;gap:14px}
 .brand{display:flex;align-items:center;gap:10px}
 .brand-mark{width:36px;height:36px;border-radius:9px;background:linear-gradient(135deg,var(--blue),var(--purple));display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff}
-.brand-name{font-size:15px;font-weight:800}
+.brand-name{font-weight:800}
 .status-chip{display:flex;align-items:center;gap:7px;padding:5px 12px;background:var(--card);border:1px solid var(--border);border-radius:20px;font-size:11px}
 .status-dot{width:6px;height:6px;border-radius:50%;background:var(--text3)}
-.status-dot.live{background:var(--green);box-shadow:0 0 8px var(--green);animation:pulseDot 2s infinite}
-@keyframes pulseDot{0%,100%{box-shadow:0 0 4px var(--green)}50%{box-shadow:0 0 12px var(--green)}}
-.last-upd{font-size:10px;color:var(--text3);white-space:nowrap}
-.last-upd strong{font-size:11px;color:var(--text2);font-family:monospace}
+.status-dot.live{background:var(--green);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.5}}
+.last-upd{font-size:10px;color:var(--text3)}
+.last-upd strong{color:var(--text2)}
 .role-badge{display:flex;align-items:center;gap:6px;padding:5px 11px;border-radius:20px;font-size:10px;font-weight:700;cursor:pointer;border:1px solid}
 .role-badge.admin{background:rgba(245,158,11,.1);border-color:rgba(245,158,11,.3);color:var(--amber)}
 .role-badge.viewer{background:rgba(6,182,212,.1);border-color:rgba(6,182,212,.3);color:var(--cyan)}
-.up-pill{display:flex;align-items:center;gap:7px;padding:6px 14px;background:var(--card);border:1px solid var(--border2);border-radius:20px;font-size:11px;cursor:pointer}
-.up-pill:hover{border-color:var(--blue);background:rgba(59,130,246,.1);color:var(--blue)}
 .tb-btn{display:flex;align-items:center;gap:5px;padding:6px 12px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:var(--card);color:var(--text2)}
 .tb-btn.export{border-color:rgba(16,185,129,.3);color:var(--green)}
 .tb-btn.logout{border-color:rgba(239,68,68,.3);color:var(--red)}
+.up-pill{display:flex;align-items:center;gap:7px;padding:6px 14px;background:var(--card);border:1px solid var(--border2);border-radius:20px;font-size:11px;cursor:pointer}
+.up-pill:hover{border-color:var(--blue);background:rgba(59,130,246,.1)}
 #fileInput{display:none}
-.app-body{display:flex;flex:1;min-height:0}
-.sidebar{width:240px;background:var(--surface);border-right:1px solid var(--border);overflow-y:auto;flex-shrink:0;display:flex;flex-direction:column}
-.sb-hdr{padding:16px 14px;display:flex;justify-content:space-between;border-bottom:1px solid var(--border)}
-.sb-title{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase}
-.filter-count{background:var(--blue);color:#fff;font-size:8px;padding:1px 6px;border-radius:10px;margin-left:6px}
+.tb-spacer{flex:1}
+.app-body{display:flex;min-height:calc(100vh - 62px)}
+.sidebar{width:240px;background:var(--surface);border-right:1px solid var(--border);overflow-y:auto;display:none}
+.sidebar.visible{display:block}
+.sb-hdr{padding:16px;display:flex;justify-content:space-between;border-bottom:1px solid var(--border)}
+.sb-title{font-size:10px;font-weight:700;color:var(--text3)}
 .sb-clear{font-size:10px;color:var(--text3);cursor:pointer}
 .sb-body{padding:12px}
 .fg{margin-bottom:14px}
 .fg-label{font-size:9.5px;font-weight:700;color:var(--text3);display:block;margin-bottom:5px}
 .f-sel{width:100%;padding:7px 10px;border-radius:8px;background:var(--card);border:1px solid var(--border);color:var(--text);font-size:11px}
 .main{flex:1;overflow-y:auto;padding:20px}
-.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;gap:18px}
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;gap:18px;text-align:center}
 .empty-icon{width:80px;height:80px;border-radius:24px;background:var(--card);display:flex;align-items:center;justify-content:center;font-size:38px}
 .empty-h{font-size:22px;font-weight:800}
-.empty-p{color:var(--text3);text-align:center}
+.empty-p{color:var(--text3);max-width:400px}
 .empty-cta{padding:12px 24px;background:linear-gradient(135deg,var(--blue-d),var(--purple-d));border:none;border-radius:24px;color:#fff;font-weight:700;cursor:pointer}
 .kpi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;margin-bottom:24px}
 .kpi-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;position:relative}
-.kpi-card .kpi-stripe{position:absolute;top:0;left:0;right:0;height:3px;background:var(--blue);border-radius:12px 12px 0 0}
+.kpi-stripe{position:absolute;top:0;left:0;right:0;height:3px;background:var(--blue);border-radius:12px 12px 0 0}
 .kpi-label{font-size:12px;color:var(--text2);margin-bottom:8px}
 .kpi-value{font-size:28px;font-weight:900;color:var(--text);line-height:1}
 .kpi-footer{margin-top:8px;font-size:10px;color:var(--text3)}
@@ -89,238 +72,506 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);font-
 .cc-sub{font-size:10px;color:var(--text3)}
 .cc-tag{font-size:9px;padding:2px 8px;border-radius:20px;background:var(--card2);border:1px solid var(--border2)}
 .chart-box{height:200px}
+canvas{max-height:100%;width:100%}
 .tbl-wrap{overflow-x:auto}
 table{width:100%;border-collapse:collapse;font-size:11.5px}
 th{padding:10px;text-align:left;background:var(--card2);color:var(--text3);font-size:9.5px}
 td{padding:10px;border-bottom:1px solid var(--border);color:var(--text2)}
 .badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700}
 .badge.b-grn{background:rgba(16,185,129,.1);color:var(--green)}
-.badge.b-red{background:rgba(239,68,68,.1);color:var(--red)}
 .badge.b-amb{background:rgba(245,158,11,.1);color:var(--amber)}
+.badge.b-red{background:rgba(239,68,68,.1);color:var(--red)}
 .footer{padding:12px 20px;border-top:1px solid var(--border);font-size:10px;color:var(--text3);text-align:center}
 @media(max-width:900px){.chart-card{grid-column:span 12!important}}
 </style>
 </head>
 <body>
-<div id="loading"><div class="spinner"></div><div class="load-text">Loading Dashboard...</div></div>
-<div id="loginModal"><div class="login-box"><div class="login-logo">SR</div><div class="login-title">Admin Portal</div><div class="login-field"><label>Username</label><input type="text" id="lusr" class="login-input" placeholder="admin"></div><div class="login-field"><label>Password</label><input type="password" id="lpwd" class="login-input" placeholder="******" onkeydown="if(event.key==='Enter')AUTH.login()"></div><button class="login-btn" onclick="AUTH.login()">Sign In as Admin</button><div class="login-err" id="loginErr">Invalid credentials</div><div class="viewer-link"><a onclick="AUTH.showViewer()">← Back to Viewer Mode</a></div></div></div>
-<header class="topbar"><div class="brand"><div class="brand-mark">SR</div><div><div class="brand-name">Maximo SR Dashboard</div></div></div><div class="status-chip"><div class="status-dot" id="statusDot"></div><span id="statusLabel">No data</span></div><div class="last-upd" id="lastUpdWrap" style="display:none"><span>Last Updated</span><strong id="lastUpdVal">—</strong></div><div style="flex:1"></div><div class="role-badge viewer" id="roleBadge" onclick="AUTH.showViewer()"><span id="roleLabel">Viewer Mode</span></div><div class="up-pill" id="upPill" style="display:none" onclick="document.getElementById('fileInput').click()"><span>📂 Upload Excel</span></div><input type="file" id="fileInput" accept=".xlsx,.xls,.csv" onchange="FILE.handle(this.files[0])"><button class="tb-btn export" id="exportBtn" style="display:none" onclick="EXPORT.run()">📎 Export</button><button class="tb-btn logout" id="logoutBtn" style="display:none" onclick="AUTH.logout()">🚪 Logout</button><button class="tb-btn" id="clearDataBtn" style="display:none" onclick="AUTH.clearData()">🗑 Clear</button></header>
-<div class="app-body"><aside class="sidebar" id="sidebar"><div class="sb-hdr"><div class="sb-title">Filters <span class="filter-count" id="filterCount">0</span></div><button class="sb-clear" onclick="FILTERS.reset()">Clear</button></div><div class="sb-body" id="sbBody"></div></aside><main class="main"><div id="emptyState" class="empty-state"><div class="empty-icon">📊</div><div class="empty-h">Maximo SR Dashboard</div><div class="empty-p">No data available. Admin can upload Excel file.</div><button class="empty-cta" id="emptyCta" style="display:none">Upload File</button></div><div id="dash" style="display:none"><div class="kpi-grid" id="kpiGrid"></div><div class="chart-grid" id="chartGrid"></div><div class="tbl-wrap"><table id="summaryTable"><thead><tr><th>Month</th><th>Total</th><th>Closed</th><th>Open</th><th>Compliance %</th></tr></thead><tbody id="tblBody"></tbody></table></div></div></main></div>
+
+<div id="loading"><div class="spinner"></div><div>Loading Dashboard...</div></div>
+
+<header class="topbar">
+  <div class="brand"><div class="brand-mark">SR</div><div><div class="brand-name">Maximo SR Dashboard</div></div></div>
+  <div class="status-chip"><div class="status-dot" id="statusDot"></div><span id="statusLabel">No data</span></div>
+  <div class="last-upd" id="lastUpdWrap" style="display:none"><span>Last Updated</span><strong id="lastUpdVal">—</strong></div>
+  <div class="tb-spacer"></div>
+  <div class="role-badge viewer" id="roleBadge" onclick="showAccessChoice()"><span id="roleLabel">Viewer Mode</span></div>
+  <div class="up-pill" id="upPill" style="display:none" onclick="document.getElementById('fileInput').click()">📂 Upload Excel</div>
+  <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" onchange="handleFileUpload(this.files[0])">
+  <button class="tb-btn export" id="exportBtn" style="display:none" onclick="exportData()">📎 Export</button>
+  <button class="tb-btn logout" id="logoutBtn" style="display:none" onclick="logout()">🚪 Logout</button>
+</header>
+
+<div class="app-body">
+  <aside class="sidebar" id="sidebar">
+    <div class="sb-hdr"><div class="sb-title">Filters</div><button class="sb-clear" onclick="resetFilters()">Clear</button></div>
+    <div class="sb-body" id="sbBody"></div>
+  </aside>
+  <main class="main">
+    <div id="emptyState" class="empty-state">
+      <div class="empty-icon">📊</div>
+      <div class="empty-h">Maximo SR Dashboard</div>
+      <div class="empty-p">No data available. Admin can upload Excel file.</div>
+      <button class="empty-cta" id="emptyCta" style="display:none" onclick="document.getElementById('fileInput').click()">📂 Upload File</button>
+    </div>
+    <div id="dash" style="display:none">
+      <div class="kpi-grid" id="kpiGrid"></div>
+      <div class="chart-grid" id="chartGrid"></div>
+      <div class="tbl-wrap"><table id="summaryTable"><thead><tr><th>Month</th><th>Total</th><th>Closed</th><th>Open</th><th>Compliance %</th></tr></thead><tbody id="tblBody"></tbody></table></div>
+    </div>
+  </main>
+</div>
+
 <footer class="footer">Maximo SR Dashboard · Data persists across refresh · Admin uploads update for all viewers</footer>
+
 <script>
-'use strict';
-// ----------------------------- CONFIG ---------------------------------
-const CFG = { ADMIN_USER: 'admin', ADMIN_PASS: 'admin123',
-  MONTHS: ['January','February','March','April','May','June','July','August','September','October','November','December'],
-  DEPT_CLR: { 'Street Light':'#3b82f6','Road Safety':'#10b981','Pavement':'#f59e0b','ITS/TS':'#8b5cf6','MEP':'#06b6d4','Structures':'#ec4899' }
+// Global state
+let rawData = [];
+let filteredData = [];
+let isAdmin = false;
+let chartInstances = {};
+
+// Admin credentials
+const ADMIN_USER = 'admin';
+const ADMIN_PASS = 'admin123';
+
+const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+// Department colors
+const DEPT_COLORS = {
+  'Street Light': '#3b82f6',
+  'Road Safety': '#10b981',
+  'Pavement': '#f59e0b',
+  'ITS/TS': '#8b5cf6',
+  'MEP': '#06b6d4',
+  'Structures': '#ec4899'
 };
-// ----------------------------- GLOBAL STATE ---------------------------
-let S = { raw: [], filtered: [], charts: {}, isAdmin: false, deptSel: '' };
-// ----------------------------- PERSISTENCE (IndexedDB) -----------------
-const DB = {
-  _DB: 'sr_dashboard_db', _STORE: 'data', _KEY: 'main',
-  async save(payload){
-    const db = await new Promise((res,rej)=>{ let r=indexedDB.open(this._DB,1); r.onupgradeneeded=e=>e.target.result.createObjectStore(this._STORE); r.onsuccess=e=>res(e.target.result); r.onerror=rej; });
-    const tx = db.transaction(this._STORE,'readwrite');
-    tx.objectStore(this._STORE).put(payload,this._KEY);
-    return new Promise(r=>{ tx.oncomplete=r; });
-  },
-  async load(){
-    const db = await new Promise((res,rej)=>{ let r=indexedDB.open(this._DB,1); r.onsuccess=e=>res(e.target.result); r.onerror=rej; });
-    return new Promise(r=>{ let req=db.transaction(this._STORE,'readonly').objectStore(this._STORE).get(this._KEY); req.onsuccess=e=>r(e.target.result); req.onerror=()=>r(null); });
-  },
-  async clear(){
-    const db = await new Promise((res,rej)=>{ let r=indexedDB.open(this._DB,1); r.onsuccess=e=>res(e.target.result); });
-    db.transaction(this._STORE,'readwrite').objectStore(this._STORE).delete(this._KEY);
+
+// ============ INDEXEDDB PERSISTENCE ============
+const DB_NAME = 'sr_dashboard_db';
+const STORE_NAME = 'dashboard';
+const DB_KEY = 'latest';
+
+function openDB() {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open(DB_NAME, 1);
+    request.onupgradeneeded = (e) => {
+      e.target.result.createObjectStore(STORE_NAME);
+    };
+    request.onsuccess = (e) => resolve(e.target.result);
+    request.onerror = (e) => reject(e.target.error);
+  });
+}
+
+async function saveToDB(data) {
+  try {
+    const db = await openDB();
+    const tx = db.transaction(STORE_NAME, 'readwrite');
+    tx.objectStore(STORE_NAME).put(data, DB_KEY);
+    return new Promise((resolve) => { tx.oncomplete = resolve; });
+  } catch(e) { console.warn('Save failed:', e); }
+}
+
+async function loadFromDB() {
+  try {
+    const db = await openDB();
+    return new Promise((resolve) => {
+      const tx = db.transaction(STORE_NAME, 'readonly');
+      const req = tx.objectStore(STORE_NAME).get(DB_KEY);
+      req.onsuccess = (e) => resolve(e.target.result);
+      req.onerror = () => resolve(null);
+    });
+  } catch(e) { return null; }
+}
+
+async function clearDB() {
+  try {
+    const db = await openDB();
+    const tx = db.transaction(STORE_NAME, 'readwrite');
+    tx.objectStore(STORE_NAME).delete(DB_KEY);
+  } catch(e) {}
+}
+
+// ============ UI HELPERS ============
+function showLoading(show) {
+  document.getElementById('loading').classList.toggle('hidden', !show);
+}
+
+function updateUIForRole() {
+  const roleBadge = document.getElementById('roleBadge');
+  const roleLabel = document.getElementById('roleLabel');
+  const upPill = document.getElementById('upPill');
+  const logoutBtn = document.getElementById('logoutBtn');
+  
+  roleBadge.className = `role-badge ${isAdmin ? 'admin' : 'viewer'}`;
+  roleLabel.textContent = isAdmin ? '⚡ Admin Mode' : '👁 Viewer Mode';
+  upPill.style.display = isAdmin ? 'flex' : 'none';
+  logoutBtn.style.display = isAdmin ? 'flex' : 'none';
+  
+  if (filteredData.length) {
+    document.getElementById('exportBtn').style.display = 'flex';
   }
-};
-// ----------------------------- AUTH & MODAL ---------------------------
-const AUTH = {
-  showViewer(){
-    S.isAdmin = false;
-    this._applyUI();
-    document.getElementById('loginModal').classList.remove('show');
-    if(S.raw.length){ this._showDashboard(); }
-    else { document.getElementById('emptyState').style.display='flex'; document.getElementById('dash').style.display='none'; document.getElementById('emptyCta').style.display='none'; document.getElementById('emptyState').querySelector('.empty-p').innerHTML='No data available. Admin upload required.'; }
-  },
-  login(){
-    let u=document.getElementById('lusr').value.trim(), p=document.getElementById('lpwd').value;
-    if(u===CFG.ADMIN_USER && p===CFG.ADMIN_PASS){
-      S.isAdmin=true;
-      document.getElementById('loginModal').classList.remove('show');
-      this._applyUI();
-      if(S.raw.length){ this._showDashboard(); } else { document.getElementById('emptyState').style.display='flex'; document.getElementById('emptyCta').style.display='flex'; document.getElementById('dash').style.display='none'; document.getElementById('emptyCta').onclick=()=>document.getElementById('fileInput').click(); }
-    } else { document.getElementById('loginErr').classList.add('show'); setTimeout(()=>document.getElementById('loginErr').classList.remove('show'),2000); }
-  },
-  logout(){ S.isAdmin=false; this._applyUI(); document.getElementById('dash').style.display='none'; document.getElementById('sidebar').classList.remove('visible'); document.getElementById('emptyState').style.display='flex'; document.getElementById('emptyCta').style.display='none'; document.getElementById('emptyState').querySelector('.empty-p').innerHTML='Admin logged out. Data remains available. Click "Viewer Mode" to view.'; },
-  clearData: async function(){ if(!confirm('⚠️ Clear ALL dashboard data? Viewers will see nothing until new upload.')) return; await DB.clear(); S.raw=[]; S.filtered=[]; Object.keys(S.charts).forEach(k=>{ try{S.charts[k].destroy();}catch(e){} }); S.charts={}; document.getElementById('dash').style.display='none'; document.getElementById('sidebar').classList.remove('visible'); document.getElementById('emptyState').style.display='flex'; document.getElementById('emptyCta').style.display='none'; document.getElementById('statusDot').classList.remove('live'); document.getElementById('statusLabel').textContent='No data'; document.getElementById('lastUpdWrap').style.display='none'; document.getElementById('exportBtn').style.display='none'; },
-  _applyUI(){
-    let isA=S.isAdmin;
-    document.getElementById('roleBadge').className='role-badge '+(isA?'admin':'viewer');
-    document.getElementById('roleLabel').textContent=isA?'⚡ Admin Mode':'👁 Viewer Mode';
-    document.getElementById('upPill').style.display=isA?'flex':'none';
-    document.getElementById('logoutBtn').style.display=isA?'flex':'none';
-    document.getElementById('clearDataBtn').style.display=isA?'flex':'none';
-    if(S.filtered.length) document.getElementById('exportBtn').style.display='flex';
-  },
-  _showDashboard(){
-    document.getElementById('emptyState').style.display='none';
-    document.getElementById('dash').style.display='block';
-    document.getElementById('sidebar').classList.add('visible');
-    FILTERS.buildSidebar();
-    RENDER.all();
+}
+
+function showAccessChoice() {
+  // Simple prompt for demo - in production use modal
+  if (!isAdmin) {
+    const pwd = prompt('Enter admin password to switch to Admin mode:');
+    if (pwd === ADMIN_PASS) {
+      isAdmin = true;
+      updateUIForRole();
+      const emptyCta = document.getElementById('emptyCta');
+      if (emptyCta) emptyCta.style.display = 'flex';
+      alert('Admin mode activated. You can now upload Excel files.');
+    } else if (pwd !== null) {
+      alert('Wrong password. Staying in Viewer mode.');
+    }
+  } else {
+    isAdmin = false;
+    updateUIForRole();
+    document.getElementById('emptyCta').style.display = 'none';
+    alert('Viewer mode activated.');
   }
-};
-// ----------------------------- FILE UPLOAD & NORMALIZE -----------------
-const FILE = {
-  async handle(file){
-    if(!file) return;
-    UI.load('Reading Excel...');
-    let data;
-    try{
-      const ab = await file.arrayBuffer();
-      const wb = XLSX.read(ab);
-      const sheet = wb.SheetNames[0];
-      const json = XLSX.utils.sheet_to_json(wb.Sheets[sheet],{defval:''});
-      data = json.map(r=>this._normalize(r)).filter(r=>r.srNo||r.status);
-    } catch(e){ UI.unload(); alert('Error parsing file: '+e.message); return; }
-    S.raw = data;
-    S.filtered = [...S.raw];
-    S.deptSel='';
-    // save to IndexedDB so viewers see same data after refresh
-    await DB.save({ rows: S.raw, fileName: file.name, timestamp: new Date().toISOString() });
-    FILTERS.buildSidebar();
-    RENDER.all();
+}
+
+function logout() {
+  isAdmin = false;
+  updateUIForRole();
+  document.getElementById('emptyCta').style.display = 'none';
+  alert('Logged out. Refresh page to re-enter.');
+}
+
+async function clearAllData() {
+  if (!confirm('⚠️ Clear ALL dashboard data? This cannot be undone.')) return;
+  await clearDB();
+  rawData = [];
+  filteredData = [];
+  // Destroy charts
+  Object.keys(chartInstances).forEach(key => {
+    if (chartInstances[key]) chartInstances[key].destroy();
+  });
+  chartInstances = {};
+  document.getElementById('dash').style.display = 'none';
+  document.getElementById('sidebar').classList.remove('visible');
+  document.getElementById('emptyState').style.display = 'flex';
+  document.getElementById('emptyCta').style.display = isAdmin ? 'flex' : 'none';
+  document.getElementById('statusDot').classList.remove('live');
+  document.getElementById('statusLabel').textContent = 'No data';
+  document.getElementById('lastUpdWrap').style.display = 'none';
+  document.getElementById('exportBtn').style.display = 'none';
+  alert('All data cleared.');
+}
+
+// ============ DATA NORMALIZATION ============
+function normalizeRow(row) {
+  const keys = Object.keys(row);
+  const find = (...patterns) => {
+    const k = keys.find(key => patterns.some(p => key.toLowerCase().includes(p)));
+    return k ? String(row[k] || '').trim() : '';
+  };
+  
+  const extractDay = (val) => {
+    if (!val) return 0;
+    if (typeof val === 'number') return (val >= 1 && val <= 31) ? val : 0;
+    if (val instanceof Date) return val.getUTCDate();
+    const d = new Date(String(val));
+    return isNaN(d) ? 0 : d.getUTCDate();
+  };
+  
+  const calRaw = row[keys.find(k => /calend/i.test(k))];
+  const calDay = extractDay(calRaw);
+  
+  return {
+    srNo: find('sr no', 'sr_no', 'SR NO'),
+    status: find('status'),
+    compliance: find('compliance'),
+    month: find('month'),
+    raisedBy: find('raised by', 'raisedby'),
+    tpcSRs: find('tpc'),
+    defectCategory: find('defect'),
+    department: find('department', 'dept'),
+    calDay: calDay
+  };
+}
+
+// ============ FILE UPLOAD ============
+async function handleFileUpload(file) {
+  if (!file || !isAdmin) {
+    if (!isAdmin) alert('Only Admin can upload files. Switch to Admin mode first.');
+    return;
+  }
+  
+  showLoading(true);
+  try {
+    const data = await file.arrayBuffer();
+    const wb = XLSX.read(data);
+    const sheetName = wb.SheetNames[0];
+    const json = XLSX.utils.sheet_to_json(wb.Sheets[sheetName], { defval: '' });
+    
+    const normalized = json.map(row => normalizeRow(row)).filter(r => r.srNo || r.status);
+    
+    if (normalized.length === 0) throw new Error('No valid data found in file');
+    
+    rawData = normalized;
+    filteredData = [...rawData];
+    
+    // Save to IndexedDB
+    await saveToDB({ rows: rawData, timestamp: new Date().toISOString(), fileName: file.name });
+    
+    // Update UI
+    buildFilters();
+    renderAll();
+    
     document.getElementById('statusDot').classList.add('live');
-    document.getElementById('statusLabel').textContent = `${S.raw.length} records`;
+    document.getElementById('statusLabel').textContent = `${rawData.length} records`;
     document.getElementById('lastUpdWrap').style.display = '';
     document.getElementById('lastUpdVal').textContent = new Date().toLocaleString();
     document.getElementById('exportBtn').style.display = 'flex';
-    document.getElementById('upPill').classList.add('loaded');
-    UI.unload();
-  },
-  _normalize(row){
-    const keys=Object.keys(row);
-    const find=(...pats)=>{ let k=keys.find(kk=>pats.some(p=>kk.toLowerCase().includes(p))); return k?String(row[k]||'').trim():''; };
-    const extractDay=(val)=>{
-      if(!val) return 0;
-      if(typeof val==='number') return (val>=1 && val<=31) ? val : 0;
-      if(val instanceof Date) return val.getUTCDate();
-      let d=new Date(String(val).trim()); return isNaN(d)?0:d.getUTCDate();
-    };
-    let calRaw=row[keys.find(k=>/calend/i.test(k))];
-    let calDay=extractDay(calRaw);
-    return {
-      srNo: find('sr no','sr_no','SR NO'), status: find('status'), compliance: find('compliance'),
-      month: find('month'), raisedBy: find('raised by','raisedby'), tpcSRs: find('tpc'),
-      defectCategory: find('defect'), department: find('department','dept'), calDay: calDay
-    };
+    document.getElementById('dash').style.display = 'block';
+    document.getElementById('emptyState').style.display = 'none';
+    document.getElementById('sidebar').classList.add('visible');
+    
+    alert(`Successfully loaded ${normalized.length} records!`);
+  } catch (err) {
+    alert('Error reading file: ' + err.message);
+  } finally {
+    showLoading(false);
+    document.getElementById('fileInput').value = '';
   }
-};
-// ----------------------------- FILTERS --------------------------------
-const FILTERS = {
-  buildSidebar(){
-    let container=document.getElementById('sbBody');
-    if(!container) return;
-    let deptVals=[...new Set(S.raw.map(r=>r.department).filter(Boolean))].sort();
-    let monthsVals=[...new Set(S.raw.map(r=>r.month).filter(Boolean))].sort((a,b)=>CFG.MONTHS.indexOf(a)-CFG.MONTHS.indexOf(b));
-    container.innerHTML=`
-      <div class="fg"><label class="fg-label">Month</label><select class="f-sel" id="fs_month" onchange="FILTERS.apply()"><option value="">All Months</option>${monthsVals.map(m=>`<option value="${m}">${m}</option>`).join('')}</select></div>
-      <div class="fg"><label class="fg-label">Department</label><select class="f-sel" id="fs_dept" onchange="FILTERS.apply()"><option value="">All</option>${deptVals.map(d=>`<option value="${d}">${d}</option>`).join('')}</select></div>
-      <div class="fg"><label class="fg-label">Status</label><select class="f-sel" id="fs_status" onchange="FILTERS.apply()"><option value="">All</option><option value="CLOSE">CLOSE</option><option value="OPEN">OPEN</option></select></div>
-      <div class="fg"><label class="fg-label">Compliance</label><select class="f-sel" id="fs_compliance" onchange="FILTERS.apply()"><option value="">All</option><option value="Compliance">Compliance</option><option value="Closed-Out of Tolerance">Out of Tolerance</option><option value="Overdue">Overdue</option></select></div>
-    `;
-  },
-  apply(){
-    let month=document.getElementById('fs_month')?.value||'';
-    let dept=document.getElementById('fs_dept')?.value||'';
-    let status=document.getElementById('fs_status')?.value||'';
-    let comp=document.getElementById('fs_compliance')?.value||'';
-    S.filtered = S.raw.filter(r=>{
-      if(month && r.month!==month) return false;
-      if(dept && r.department!==dept) return false;
-      if(status && r.status!==status) return false;
-      if(comp && r.compliance!==comp) return false;
-      return true;
+}
+
+// ============ FILTERS ============
+function buildFilters() {
+  const container = document.getElementById('sbBody');
+  if (!container) return;
+  
+  const departments = [...new Set(rawData.map(r => r.department).filter(Boolean))].sort();
+  const months = [...new Set(rawData.map(r => r.month).filter(Boolean))].sort((a,b) => MONTHS.indexOf(a) - MONTHS.indexOf(b));
+  const statuses = [...new Set(rawData.map(r => r.status).filter(Boolean))];
+  const compliances = [...new Set(rawData.map(r => r.compliance).filter(Boolean))];
+  
+  container.innerHTML = `
+    <div class="fg"><label class="fg-label">Month</label><select class="f-sel" id="filterMonth" onchange="applyFilters()"><option value="">All Months</option>${months.map(m => `<option value="${m}">${m}</option>`).join('')}</select></div>
+    <div class="fg"><label class="fg-label">Department</label><select class="f-sel" id="filterDept" onchange="applyFilters()"><option value="">All Departments</option>${departments.map(d => `<option value="${d}">${d}</option>`).join('')}</select></div>
+    <div class="fg"><label class="fg-label">Status</label><select class="f-sel" id="filterStatus" onchange="applyFilters()"><option value="">All Status</option>${statuses.map(s => `<option value="${s}">${s}</option>`).join('')}</select></div>
+    <div class="fg"><label class="fg-label">Compliance</label><select class="f-sel" id="filterCompliance" onchange="applyFilters()"><option value="">All</option>${compliances.map(c => `<option value="${c}">${c}</option>`).join('')}</select></div>
+  `;
+}
+
+function applyFilters() {
+  const month = document.getElementById('filterMonth')?.value || '';
+  const dept = document.getElementById('filterDept')?.value || '';
+  const status = document.getElementById('filterStatus')?.value || '';
+  const compliance = document.getElementById('filterCompliance')?.value || '';
+  
+  filteredData = rawData.filter(r => {
+    if (month && r.month !== month) return false;
+    if (dept && r.department !== dept) return false;
+    if (status && r.status !== status) return false;
+    if (compliance && r.compliance !== compliance) return false;
+    return true;
+  });
+  
+  renderAll();
+}
+
+function resetFilters() {
+  const selects = ['filterMonth', 'filterDept', 'filterStatus', 'filterCompliance'];
+  selects.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  filteredData = [...rawData];
+  renderAll();
+}
+
+// ============ RENDER FUNCTIONS ============
+function renderKPIs() {
+  const d = filteredData;
+  const n = d.length;
+  const closed = d.filter(r => r.status === 'CLOSE').length;
+  const open = n - closed;
+  const crm = d.filter(r => r.raisedBy === 'CRM').length;
+  const pwa = d.filter(r => r.raisedBy === 'PWA').length;
+  const tpc = d.filter(r => r.tpcSRs === 'TPC').length;
+  const compliant = d.filter(r => r.compliance === 'Compliance').length;
+  const oot = d.filter(r => r.compliance === 'Closed-Out of Tolerance').length;
+  const compRate = n ? ((compliant / n) * 100).toFixed(1) : 0;
+  
+  document.getElementById('kpiGrid').innerHTML = `
+    <div class="kpi-card"><div class="kpi-stripe"></div><div class="kpi-label">Total SR</div><div class="kpi-value">${n}</div><div class="kpi-footer">All records</div></div>
+    <div class="kpi-card"><div class="kpi-stripe" style="background:var(--green)"></div><div class="kpi-label">Closed SR</div><div class="kpi-value">${closed}</div><div class="kpi-footer">${n ? ((closed/n)*100).toFixed(1) : 0}%</div></div>
+    <div class="kpi-card"><div class="kpi-stripe" style="background:var(--amber)"></div><div class="kpi-label">Open SR</div><div class="kpi-value">${open}</div></div>
+    <div class="kpi-card"><div class="kpi-stripe" style="background:var(--blue)"></div><div class="kpi-label">CRM Raised</div><div class="kpi-value">${crm}</div></div>
+    <div class="kpi-card"><div class="kpi-stripe" style="background:var(--purple)"></div><div class="kpi-label">PWA Raised</div><div class="kpi-value">${pwa}</div></div>
+    <div class="kpi-card"><div class="kpi-stripe" style="background:var(--cyan)"></div><div class="kpi-label">TPC SRs</div><div class="kpi-value">${tpc}</div></div>
+    <div class="kpi-card"><div class="kpi-stripe" style="background:var(--green)"></div><div class="kpi-label">Compliant</div><div class="kpi-value">${compliant}</div><div class="kpi-footer">${compRate}%</div></div>
+    <div class="kpi-card"><div class="kpi-stripe" style="background:var(--red)"></div><div class="kpi-label">Out of Tolerance</div><div class="kpi-value">${oot}</div></div>
+  `;
+}
+
+function createChart(id, type, labels, data, colors, options = {}) {
+  const canvas = document.getElementById(id);
+  if (!canvas) return;
+  if (chartInstances[id]) chartInstances[id].destroy();
+  const ctx = canvas.getContext('2d');
+  chartInstances[id] = new Chart(ctx, {
+    type: type,
+    data: { labels: labels, datasets: [{ data: data, backgroundColor: colors, borderRadius: 6 }] },
+    options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { position: 'bottom', labels: { color: '#6b87a8', font: { size: 10 } } }, datalabels: { display: false } }, ...options }
+  });
+}
+
+function renderCharts() {
+  const d = filteredData;
+  
+  // Status chart
+  const closed = d.filter(r => r.status === 'CLOSE').length;
+  const open = d.filter(r => r.status === 'OPEN').length;
+  
+  // Compliance chart
+  const compliant = d.filter(r => r.compliance === 'Compliance').length;
+  const oot = d.filter(r => r.compliance === 'Closed-Out of Tolerance').length;
+  const other = d.length - compliant - oot;
+  
+  // Department chart
+  const deptMap = {};
+  d.forEach(r => { if (r.department) deptMap[r.department] = (deptMap[r.department] || 0) + 1; });
+  const depts = Object.keys(deptMap);
+  const deptVals = depts.map(d => deptMap[d]);
+  const deptColors = depts.map(d => DEPT_COLORS[d] || '#3b82f6');
+  
+  // Monthly trend
+  const monthlyMap = {};
+  d.forEach(r => { if (r.month) monthlyMap[r.month] = (monthlyMap[r.month] || 0) + 1; });
+  const months = MONTHS.filter(m => monthlyMap[m]);
+  const monthVals = months.map(m => monthlyMap[m] || 0);
+  
+  document.getElementById('chartGrid').innerHTML = `
+    <div class="chart-card cs3"><div class="cc-hdr"><div><div class="cc-title">Status</div></div><span class="cc-tag">Doughnut</span></div><div class="chart-box"><canvas id="statusChart"></canvas></div></div>
+    <div class="chart-card cs3"><div class="cc-hdr"><div><div class="cc-title">Compliance</div></div><span class="cc-tag">Doughnut</span></div><div class="chart-box"><canvas id="complianceChart"></canvas></div></div>
+    <div class="chart-card cs6"><div class="cc-hdr"><div><div class="cc-title">Department Volume</div></div><span class="cc-tag">Bar</span></div><div class="chart-box"><canvas id="deptChart"></canvas></div></div>
+    <div class="chart-card cs12"><div class="cc-hdr"><div><div class="cc-title">Monthly SR Trend</div></div><span class="cc-tag">Line</span></div><div class="chart-box"><canvas id="trendChart"></canvas></div></div>
+  `;
+  
+  createChart('statusChart', 'doughnut', ['Closed', 'Open'], [closed, open], ['#10b981', '#f59e0b']);
+  createChart('complianceChart', 'doughnut', ['Compliant', 'Out of Tolerance', 'Other'], [compliant, oot, other], ['#10b981', '#ef4444', '#6b87a8']);
+  createChart('deptChart', 'bar', depts, deptVals, deptColors, { indexAxis: 'y' });
+  
+  // Line chart for trend
+  const trendCanvas = document.getElementById('trendChart');
+  if (trendCanvas && chartInstances['trendChart']) chartInstances['trendChart'].destroy();
+  if (trendCanvas) {
+    const ctx = trendCanvas.getContext('2d');
+    chartInstances['trendChart'] = new Chart(ctx, {
+      type: 'line',
+      data: { labels: months, datasets: [{ label: 'SR Count', data: monthVals, borderColor: '#3b82f6', backgroundColor: 'rgba(59,130,246,.1)', fill: true, tension: 0.3, pointBackgroundColor: '#3b82f6', pointRadius: 4 }] },
+      options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { position: 'top' }, datalabels: { display: false } } }
     });
-    let cnt=(month?1:0)+(dept?1:0)+(status?1:0)+(comp?1:0);
-    document.getElementById('filterCount').textContent=cnt;
-    RENDER.all();
-  },
-  reset(){
-    let els=['fs_month','fs_dept','fs_status','fs_compliance'];
-    els.forEach(id=>{ let el=document.getElementById(id); if(el) el.value=''; });
-    this.apply();
   }
-};
-// ----------------------------- RENDER (KPI, CHARTS, TABLE) ------------
-const RENDER = {
-  all(){
-    if(!S.filtered.length) return;
-    this._renderKPIs();
-    this._renderCharts();
-    this._renderTable();
-  },
-  _renderKPIs(){
-    let d=S.filtered, n=d.length, closed=d.filter(r=>r.status==='CLOSE').length, open=n-closed,
-        crm=d.filter(r=>r.raisedBy==='CRM').length, pwa=d.filter(r=>r.raisedBy==='PWA').length,
-        tpc=d.filter(r=>r.tpcSRs==='TPC').length, comp=d.filter(r=>r.compliance==='Compliance').length,
-        oot=d.filter(r=>r.compliance==='Closed-Out of Tolerance').length, compRate=n?((comp/n)*100).toFixed(1):0;
-    document.getElementById('kpiGrid').innerHTML=`
-      <div class="kpi-card"><div class="kpi-stripe"></div><div class="kpi-label">Total SR</div><div class="kpi-value">${n}</div><div class="kpi-footer">All records</div></div>
-      <div class="kpi-card"><div class="kpi-stripe" style="background:var(--green)"></div><div class="kpi-label">Closed SR</div><div class="kpi-value">${closed}</div><div class="kpi-footer">${((closed/n)*100||0).toFixed(1)}%</div></div>
-      <div class="kpi-card"><div class="kpi-stripe" style="background:var(--amber)"></div><div class="kpi-label">Open SR</div><div class="kpi-value">${open}</div></div>
-      <div class="kpi-card"><div class="kpi-stripe" style="background:var(--blue)"></div><div class="kpi-label">CRM Raised</div><div class="kpi-value">${crm}</div></div>
-      <div class="kpi-card"><div class="kpi-stripe" style="background:var(--purple)"></div><div class="kpi-label">PWA Raised</div><div class="kpi-value">${pwa}</div></div>
-      <div class="kpi-card"><div class="kpi-stripe" style="background:var(--cyan)"></div><div class="kpi-label">TPC SRs</div><div class="kpi-value">${tpc}</div></div>
-      <div class="kpi-card"><div class="kpi-stripe" style="background:var(--green)"></div><div class="kpi-label">Compliance</div><div class="kpi-value">${comp}</div><div class="kpi-footer">${compRate}%</div></div>
-      <div class="kpi-card"><div class="kpi-stripe" style="background:var(--red)"></div><div class="kpi-label">Out of Tolerance</div><div class="kpi-value">${oot}</div></div>
-    `;
-  },
-  _renderCharts(){
-    let d=S.filtered;
-    // status chart
-    let closed=d.filter(r=>r.status==='CLOSE').length, open=d.filter(r=>r.status==='OPEN').length;
-    this._makeChart('cStatus','doughnut',['Closed','Open'],[closed,open],['#10b981','#f59e0b']);
-    // compliance chart
-    let compCount=d.filter(r=>r.compliance==='Compliance').length, ootCount=d.filter(r=>r.compliance==='Closed-Out of Tolerance').length, other=d.length-compCount-ootCount;
-    this._makeChart('cComp','doughnut',['Compliant','Out of Tolerance','Other'],[compCount,ootCount,other],['#10b981','#ef4444','#6b87a8']);
-    // Dept chart (horizontal)
-    let deptMap={}; d.forEach(r=>{ if(r.department) deptMap[r.department]=(deptMap[r.department]||0)+1; });
-    let depts=Object.keys(deptMap), deptVals=depts.map(d=>deptMap[d]);
-    this._makeChart('cDept','bar',depts,deptVals,depts.map(d=>CFG.DEPT_CLR[d]||'#3b82f6'),{indexAxis:'y'});
-    // Monthly trend
-    let monthly={}; d.forEach(r=>{ if(r.month) monthly[r.month]=(monthly[r.month]||0)+1; });
-    let months=CFG.MONTHS.filter(m=>monthly[m]);
-    let monthVals=months.map(m=>monthly[m]||0);
-    this._makeChart('cTrend','line',months,monthVals,['#3b82f6'],{fill:true});
-    document.getElementById('chartGrid').innerHTML=`
-      <div class="chart-card cs3"><div class="cc-hdr"><div><div class="cc-title">Status</div></div><span class="cc-tag">Doughnut</span></div><div class="chart-box"><canvas id="cStatus"></canvas></div></div>
-      <div class="chart-card cs3"><div class="cc-hdr"><div><div class="cc-title">Compliance</div></div><span class="cc-tag">Doughnut</span></div><div class="chart-box"><canvas id="cComp"></canvas></div></div>
-      <div class="chart-card cs6"><div class="cc-hdr"><div><div class="cc-title">Department Volume</div></div><span class="cc-tag">Bar</span></div><div class="chart-box"><canvas id="cDept"></canvas></div></div>
-      <div class="chart-card cs12"><div class="cc-hdr"><div><div class="cc-title">Monthly SR Trend</div></div><span class="cc-tag">Line</span></div><div class="chart-box"><canvas id="cTrend"></canvas></div></div>
-    `;
-  },
-  _makeChart(id,type,labels,data,bgColor,extra={}){
-    let ctx=document.getElementById(id)?.getContext('2d');
-    if(!ctx) return;
-    if(S.charts[id]) S.charts[id].destroy();
-    S.charts[id]=new Chart(ctx,{type,data:{labels,datasets:[{data,backgroundColor:Array.isArray(bgColor)?bgColor:[bgColor],borderRadius:6,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{position:'bottom',labels:{color:'#6b87a8',font:{size:10}}},datalabels:{display:false}},...extra}});
-  },
-  _renderTable(){
-    let monthlyAgg={};
-    S.filtered.forEach(r=>{ if(!r.month) return; if(!monthlyAgg[r.month]) monthlyAgg[r.month]={total:0,closed:0,comp:0}; monthlyAgg[r.month].total++; if(r.status==='CLOSE') monthlyAgg[r.month].closed++; if(r.compliance==='Compliance') monthlyAgg[r.month].comp++; });
-    let html='';
-    for(let m of CFG.MONTHS){
-      if(!monthlyAgg[m]) continue;
-      let rec=monthlyAgg[m], pct=rec.total?((rec.comp/rec.total)*100).toFixed(1):0;
-      html+=`<tr><td>${m}</td><td>${rec.total}</td><td>${rec.closed}</td><td>${rec.total-rec.closed}</td><td><span class="badge ${pct>=90?'b-grn':'b-amb'}">${pct}%</span></td></tr>`;
+}
+
+function renderTable() {
+  const monthlyAgg = {};
+  filteredData.forEach(r => {
+    if (!r.month) return;
+    if (!monthlyAgg[r.month]) monthlyAgg[r.month] = { total: 0, closed: 0, compliant: 0 };
+    monthlyAgg[r.month].total++;
+    if (r.status === 'CLOSE') monthlyAgg[r.month].closed++;
+    if (r.compliance === 'Compliance') monthlyAgg[r.month].compliant++;
+  });
+  
+  let html = '';
+  for (const m of MONTHS) {
+    if (!monthlyAgg[m]) continue;
+    const rec = monthlyAgg[m];
+    const pct = rec.total ? ((rec.compliant / rec.total) * 100).toFixed(1) : 0;
+    const badgeClass = pct >= 90 ? 'b-grn' : (pct >= 70 ? 'b-amb' : 'b-red');
+    html += `<tr><td>${m}</td><td>${rec.total}</td><td>${rec.closed}</td><td>${rec.total - rec.closed}</td><td><span class="badge ${badgeClass}">${pct}%</span></td></tr>`;
+  }
+  document.getElementById('tblBody').innerHTML = html;
+}
+
+function renderAll() {
+  if (!filteredData.length) {
+    document.getElementById('dash').style.display = 'none';
+    return;
+  }
+  document.getElementById('dash').style.display = 'block';
+  renderKPIs();
+  renderCharts();
+  renderTable();
+}
+
+// ============ EXPORT ============
+function exportData() {
+  if (!filteredData.length) {
+    alert('No data to export');
+    return;
+  }
+  const ws = XLSX.utils.json_to_sheet(filteredData);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'SR_Data');
+  XLSX.writeFile(wb, `SR_Export_${new Date().toISOString().slice(0,10)}.xlsx`);
+}
+
+// ============ EMBEDDED DATA & INIT ============
+const EMBEDDED_DATA = [
+  { "Raised By": "CRM", "Calender": "1900-01-13", "Month": "January", "TPC SRs": "", "Compliance": "Compliance", "SR NO": 10303136, "Status": "CLOSE", "Defect Category": "CAT 1", "Department": "Pavement" },
+  { "Raised By": "CRM", "Calender": "1900-01-13", "Month": "January", "TPC SRs": "", "Compliance": "Compliance", "SR NO": 10315572, "Status": "CLOSE", "Defect Category": "CAT 1", "Department": "Pavement" },
+  { "Raised By": "CRM", "Calender": "1900-01-01", "Month": "January", "TPC SRs": "", "Compliance": "Closed-Out of Tolerance", "SR NO": 10347668, "Status": "CLOSE", "Defect Category": "CAT2", "Department": "Pavement" },
+  { "Raised By": "CRM", "Calender": "1900-01-26", "Month": "February", "TPC SRs": "", "Compliance": "Compliance", "SR NO": 10347690, "Status": "CLOSE", "Defect Category": "CAT2", "Department": "Pavement" },
+  { "Raised By": "PWA", "Calender": "1900-01-01", "Month": "January", "TPC SRs": "", "Compliance": "Closed-Out of Tolerance", "SR NO": 10347718, "Status": "CLOSE", "Defect Category": "CAT 1", "Department": "Pavement" },
+  { "Raised By": "CRM", "Calender": "1900-01-20", "Month": "January", "TPC SRs": "", "Compliance": "Compliance", "SR NO": 10347944, "Status": "CLOSE", "Defect Category": "CAT2", "Department": "Road Safety" },
+  { "Raised By": "CRM", "Calender": "1900-01-20", "Month": "January", "TPC SRs": "TPC", "Compliance": "Compliance", "SR NO": 10348377, "Status": "CLOSE", "Defect Category": "CAT2", "Department": "Road Safety" },
+  { "Raised By": "CRM", "Calender": "1900-01-21", "Month": "January", "TPC SRs": "", "Compliance": "Compliance", "SR NO": 10350525, "Status": "CLOSE", "Defect Category": "CAT2", "Department": "Road Safety" }
+];
+
+async function init() {
+  showLoading(true);
+  try {
+    // Try to load from IndexedDB first
+    const saved = await loadFromDB();
+    if (saved && saved.rows && saved.rows.length) {
+      rawData = saved.rows;
+      filteredData = [...rawData];
+      document.getElementById('statusDot').classList.add('live');
+      document.getElementById('statusLabel').textContent = `${rawData.length} records`;
+      if (saved.timestamp) {
+        document.getElementById('lastUpdWrap').style.display = '';
+        document.getElementById('lastUpdVal').textContent = new Date(saved.timestamp).toLocaleString();
+      }
+    } else {
+      // Use embedded data
+      rawData = EMBEDDED_DATA.map(row => normalizeRow(row));
+      filteredData = [...rawData];
+      document.getElementById('statusDot').classList.add('live');
+      document.getElementById('statusLabel').textContent = `${rawData.length} records`;
+      document.getElementById('lastUpdWrap').style.display = '';
+      document.getElementById('lastUpdVal').textContent = 'Pre-loaded data';
+      await saveToDB({ rows: rawData, timestamp: new Date().toISOString() });
     }
-    document.getElementById('tblBody').innerHTML=html;
+    
+    if (rawData.length) {
+      buildFilters();
+      renderAll();
+      document.getElementById('dash').style.display = 'block';
+      document.getElementById('emptyState').style.display = 'none';
+      document.getElementById('sidebar').classList.add('visible');
+      document.getElementById('exportBtn').style.display = 'flex';
+    }
+    
+    updateUIForRole();
+  } catch (err) {
+    console.error('Init error:', err);
+    document.getElementById('emptyState').style.display = 'flex';
+    document.getElementById('emptyState').querySelector('.empty-p').innerHTML = 'Error loading data. Please refresh.';
+  } finally {
+    showLoading(false);
   }
-};
-// ----------------------------- EXPORT ---------------------------------
-const EXPORT = {
-  run(){
-    if(!S.filtered.length) return alert('No data');
-    let ws=XLSX.utils.json_to_sheet(S.filtered
+}
+
+// Start the app
+init();
+</script>
+</body>
+</html>
