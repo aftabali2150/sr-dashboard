@@ -2,6 +2,9 @@ services:
   - type: web
     name: sr-dashboard
     runtime: python
-    pythonVersion: "3.11.0"
-    buildCommand: "echo done"
-    startCommand: "python server.py"
+    pythonVersion: "3.11.9"
+    buildCommand: pip install --upgrade pip
+    startCommand: python server.py
+    envVars:
+      - key: PORT
+        value: 10000
