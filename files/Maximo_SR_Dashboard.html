@@ -929,14 +929,11 @@ const AUTH = {
   async clearData(){
     if(!confirm('Clear all saved dashboard data? Viewers will see an empty dashboard until you upload a new file.')) return;
     await DB.clear();
-    if(window._BIN_ID && window._BIN_KEY){
-      fetch('https://api.jsonbin.io/v3/b/'+window._BIN_ID,{
-        method:'PUT',
-        headers:{'Content-Type':'application/json','X-Master-Key':window._BIN_KEY},
-        body:JSON.stringify({cleared:true,rows:[],ts:new Date().toISOString()})
-      }).catch(e=>console.warn('Cloud clear failed:',e));
-    }
-    try{localStorage.removeItem('sr_dashboard_data');}catch(e){}
+    fetch('/save_data',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({cleared:true,rows:[],ts:new Date().toISOString()})
+    }).catch(e=>console.warn('Clear failed:',e));
     S.raw=[]; S.filtered=[];
     /* Destroy all chart instances */
     Object.keys(S.charts).forEach(k=>{ try{S.charts[k].destroy();}catch(e){} });
@@ -1076,17 +1073,18 @@ const FILE = {
       now.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}) + ' ' +
       now.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',second:'2-digit'});
     document.getElementById('exportBtn').style.display = '';
-    // Save to JSONBin cloud — ALL users see updated data
+    // Save to server — ALL users on Render see updated data
     const _p = { rows: S.raw, fname: fname, ts: new Date().toISOString() };
-    try { localStorage.setItem('sr_dashboard_data', JSON.stringify(_p)); } catch(e){}
-    if(window._BIN_ID && window._BIN_KEY){
-      fetch('https://api.jsonbin.io/v3/b/' + window._BIN_ID, {
-        method:'PUT',
-        headers:{'Content-Type':'application/json','X-Master-Key':window._BIN_KEY},
-        body: JSON.stringify(_p)
-      }).then(r => { if(r.ok) console.log('Saved to cloud — all users updated'); })
-        .catch(e => console.warn('Cloud save failed:', e));
-    }
+    fetch('/save_data', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(_p)
+    })
+    .then(r => {
+      if(r.ok){ console.log('Saved to server — all users updated'); }
+      else { console.warn('Server save failed:', r.status); }
+    })
+    .catch(e => console.warn('Save error:', e));
     UI.unload();
   },
 };
@@ -2067,8 +2065,6 @@ const DB = {
 };
 
 /* ── Bootstrap ── */
-window._BIN_ID="6a0edb41ee5a733b12f62d76";
-window._BIN_KEY="$2a$10$/DCpKgeLg3CwNhJJ2Ou3jOGYhGlttzRgdJiP1NOmTPztZ4du5qBIO";
 (async function bootstrap(){
   Chart.register(ChartDataLabels);
 
@@ -2084,7 +2080,7 @@ window._BIN_KEY="$2a$10$/DCpKgeLg3CwNhJJ2Ou3jOGYhGlttzRgdJiP1NOmTPztZ4du5qBIO";
   try {
     UI.load('Loading SR data…');
 
-    function showTimestamp(ts){
+    function _showTS(ts){
       if(!ts) return;
       const d = new Date(ts);
       document.getElementById('lastUpdWrap').style.display = '';
@@ -2094,65 +2090,41 @@ window._BIN_KEY="$2a$10$/DCpKgeLg3CwNhJJ2Ou3jOGYhGlttzRgdJiP1NOmTPztZ4du5qBIO";
         d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
     }
 
-    function showModal(){
+    function _showModal(){
       document.getElementById('accessModal').classList.remove('hidden');
       AUTH._apply();
       setTimeout(()=>UI.unload(), 400);
     }
 
-    function loadFromCache(){
-      try{
-        const saved = localStorage.getItem('sr_dashboard_data');
-        if(saved){
-          const p = JSON.parse(saved);
-          if(p && p.rows && p.rows.length){
-            FILE._bootSync(p.rows, p.fname || FNAME);
-            showTimestamp(p.ts);
-            showModal();
-            return true;
-          }
-        }
-      } catch(e){}
-      return false;
-    }
-
-    function loadEmbedded(){
+    function _loadEmbedded(){
       FILE._bootSync(EMBEDDED, FNAME);
       document.getElementById('lastUpdWrap').style.display = '';
       document.getElementById('lastUpdVal').textContent = 'Data updated: ' + UPDATED;
-      showModal();
+      _showModal();
     }
 
-    /* Try JSONBin cloud first — then cache — then embedded */
-    if(window._BIN_ID && window._BIN_KEY){
-      fetch('https://api.jsonbin.io/v3/b/' + window._BIN_ID + '/latest', {
-        headers: {'X-Master-Key': window._BIN_KEY}
-      })
-      .then(r => r.ok ? r.json() : Promise.reject('not ok'))
-      .then(result => {
-        const p = result.record;
-        if(p && p.cleared){
-          document.getElementById('emptyHint').innerHTML =
-            '<b style="color:var(--amber,#f59e0b)">Dashboard cleared by Admin</b><br>'+
-            '<span style="color:var(--text2)">Waiting for Admin to upload new data.</span>';
-          showModal(); return;
-        }
-        if(p && p.rows && p.rows.length){
-          FILE._bootSync(p.rows, p.fname || FNAME);
-          showTimestamp(p.ts);
-          try{ localStorage.setItem('sr_dashboard_data', JSON.stringify(p)); }catch(e){}
-          showModal();
-        } else {
-          if(!loadFromCache()) loadEmbedded();
-        }
-      })
-      .catch(e => {
-        console.warn('Cloud load failed:', e);
-        if(!loadFromCache()) loadEmbedded();
-      });
-    } else {
-      if(!loadFromCache()) loadEmbedded();
-    }
+    /* Load from server sr_data.json — works for ALL users on Render */
+    fetch('/sr_data.json?v=' + Date.now())
+    .then(r => r.ok ? r.json() : Promise.reject('no server data'))
+    .then(p => {
+      if(p && p.cleared){
+        document.getElementById('emptyHint').innerHTML =
+          '<b style="color:var(--amber,#f59e0b)">Dashboard cleared by Admin</b><br>'+
+          '<span style="color:var(--text2)">Waiting for Admin to upload new data.</span>';
+        _showModal(); return;
+      }
+      if(p && p.rows && p.rows.length){
+        FILE._bootSync(p.rows, p.fname || FNAME);
+        _showTS(p.ts);
+        _showModal();
+      } else {
+        _loadEmbedded();
+      }
+    })
+    .catch(() => {
+      /* Server data not available — use embedded */
+      _loadEmbedded();
+    });
 
   } catch(err){
     console.warn('Load failed:', err);
