@@ -1,7 +1,6 @@
 import http.server
 import json
 import os
-import sys
 from datetime import datetime
 
 PORT = int(os.environ.get('PORT', 10000))
@@ -16,6 +15,22 @@ class Handler(http.server.SimpleHTTPRequestHandler):
     def do_GET(self):
         if self.path == '/' or self.path == '':
             self.path = '/Maximo_SR_Dashboard.html'
+        # Serve sr_data.json with no-cache headers
+        if self.path == '/sr_data.json' or self.path.startswith('/sr_data.json?'):
+            if os.path.exists(DATA_FILE):
+                with open(DATA_FILE, 'rb') as f:
+                    data = f.read()
+                self.send_response(200)
+                self.send_header('Content-Type', 'application/json')
+                self.send_header('Content-Length', str(len(data)))
+                self.send_header('Cache-Control', 'no-cache, no-store, must-revalidate')
+                self.send_header('Access-Control-Allow-Origin', '*')
+                self.end_headers()
+                self.wfile.write(data)
+            else:
+                self.send_response(404)
+                self.end_headers()
+            return
         super().do_GET()
 
     def do_POST(self):
@@ -26,11 +41,11 @@ class Handler(http.server.SimpleHTTPRequestHandler):
                 payload = json.loads(body)
                 with open(DATA_FILE, 'w', encoding='utf-8') as f:
                     json.dump(payload, f, ensure_ascii=False)
+                count = len(payload.get('rows', []))
                 if payload.get('cleared'):
-                    print(f"Data CLEARED by Admin", flush=True)
+                    print(f"[{datetime.now().strftime('%H:%M:%S')}] CLEARED by Admin", flush=True)
                 else:
-                    count = len(payload.get('rows', []))
-                    print(f"Data SAVED — {count} records", flush=True)
+                    print(f"[{datetime.now().strftime('%H:%M:%S')}] SAVED {count} records — all users updated", flush=True)
                 self.send_response(200)
                 self.send_header('Content-Type', 'application/json')
                 self.send_header('Access-Control-Allow-Origin', '*')
@@ -56,7 +71,6 @@ class Handler(http.server.SimpleHTTPRequestHandler):
 
 if __name__ == '__main__':
     os.chdir(FOLDER)
-    print(f"Starting SR Dashboard on port {PORT}", flush=True)
-    server = http.server.HTTPServer(('0.0.0.0', PORT), Handler)
-    print(f"Server running on port {PORT}", flush=True)
-    server.serve_forever()
+    print(f"SR Dashboard Server running on port {PORT}", flush=True)
+    with http.server.HTTPServer(('0.0.0.0', PORT), Handler) as httpd:
+        httpd.serve_forever()
